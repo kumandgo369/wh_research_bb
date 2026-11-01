@@ -1,0 +1,26 @@
+[project]
+name = "wh-research-bb"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "kumandgo369", email = "lamweiheng54@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "hyperliquid-python-sdk>=0.24.0",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.11.2",
+    "numpy>=2.5.4",
+    "pandas>=3.1.0",
+    "polars>=2.1.0",
+    "seaborn>=0.13.2",
+    "tenacity>=9.2.1",
+]
+
+[project.scripts]
+wh-research-bb = "wh_research_bb:main"
+
+[build-system]
+requires = ["uv_build>=0.12.15,<0.13.0"]
+build-backend = "uv_build"
