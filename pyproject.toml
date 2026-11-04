@@ -9,12 +9,16 @@ authors = [
 requires-python = ">=3.13"
 dependencies = [
     "hyperliquid-python-sdk>=0.24.0",
+    "itables>=2.9.1",
     "jupyter>=1.1.1",
     "matplotlib>=3.11.2",
     "numpy>=2.5.4",
     "pandas>=3.1.0",
     "polars>=2.1.0",
+    "pyarrow>=26.0.0",
+    "scikit-learn>=1.9.1",
     "seaborn>=0.13.2",
+    "statsmodels>=0.15.0",
     "tenacity>=9.2.1",
 ]
 
