@@ -7,7 +7,7 @@ from hyperliquid.info import Info
 from hyperliquid.utils.constants import MAINNET_API_URL
 from hyperliquid.utils.error import ClientError, ServerError
 from tenacity import (
-    before,
+    before,  # TODO change this
     retry,
     retry_if_exception,
     stop_after_attempt,
