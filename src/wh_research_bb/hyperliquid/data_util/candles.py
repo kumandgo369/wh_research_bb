@@ -7,7 +7,7 @@ from hyperliquid.info import Info
 from hyperliquid.utils.constants import MAINNET_API_URL
 from hyperliquid.utils.error import ClientError, ServerError
 from tenacity import (
-    before,  # TODO change this
+    before_sleep_log,
     retry,
     retry_if_exception,
     stop_after_attempt,
@@ -103,6 +103,7 @@ def _get_perp_universe_list() -> list[str]:
     stop=stop_after_attempt(7),
     wait=wait_exponential_jitter(5, 60),
     reraise=True,
+    before_sleep=before_sleep_log(logger=logger, log_level=logging.WARNING),
 )
 def _download_candles_df(
     symbol: str, candle_interval: str, start: int, end: int, now: datetime
@@ -148,8 +149,8 @@ def _format_raw_candles_df(df: pl.DataFrame, now: datetime) -> pl.DataFrame:
     return df
 
 
-def download_list_candles_max(  # TODO: remove symbols arg, pass _get_perp_universe_list instead
-    symbols: list[str], candle_interval: str
+def download_list_candles_max(
+    candle_interval: str, symbols: list[str] | None = None
 ) -> tuple[pl.DataFrame, list[str]]:
     """
     downloads a long panel dataframe
@@ -157,6 +158,9 @@ def download_list_candles_max(  # TODO: remove symbols arg, pass _get_perp_unive
     """
     if candle_interval not in TIME_INTERVALS:
         raise ValueError("Chosen time interval is not supported")
+
+    if symbols is None:
+        symbols = _get_perp_universe_list()
 
     time_delta = TIME_DELTA_MAP[candle_interval]
     now = datetime.now(UTC)
@@ -174,7 +178,7 @@ def download_list_candles_max(  # TODO: remove symbols arg, pass _get_perp_unive
                     now=now,
                 )
             )
-            logger.info(
+            logger.warning(  # TODO: change warning to info
                 f"{symbol} {candle_interval} downloaded (symbol {i + 1} / {len(symbols)})"
             )
         except (
@@ -188,7 +192,7 @@ def download_list_candles_max(  # TODO: remove symbols arg, pass _get_perp_unive
             )
             failed_symbols.append(symbol)
         time.sleep(
-            WAIT
+            WAIT  # TODO: consider dynamic wait period depending on no. of candles downloaded per request
         )  # TODO: add logic to prevent sleep after final symbol is downlaoded
     if frames:
         df = pl.concat(frames).sort(["symbol", "timestamp"])
